@@ -16,6 +16,7 @@ runs:
       with:
         repository: block/goose
         ref: v1.0
+        path: block/goose
 
     - name: Build Goose
       working-directory: block/goose
