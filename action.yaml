@@ -18,6 +18,10 @@ runs:
         ref: v1.0
         path: block/goose
 
+    - name: Install deps
+      run: sudo apt install build-essential libdbus-1-dev
+      shell: bash
+
     - name: Build Goose
       working-directory: block/goose
       run: cargo build --release && mv target/release/goose /usr/local/bin/goose
