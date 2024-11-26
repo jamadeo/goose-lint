@@ -1,0 +1,47 @@
+name: 'Goose Lint'
+description: 'Lint your code with plain-English instructions'
+inputs:
+  rule:
+    description: 'Lint rule'
+    required: true
+    default: 'Check that all comments (in-line, docstring, or other) are still relevant and accurate.'
+outputs:
+  result:
+    description: "The lint result"
+    value: ${{ steps.goose-lint.outputs.lint-result }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: block/goose
+        ref: v1.0
+
+    - name: Build Goose
+      working-directory: block/goose
+      run: cargo build --release && mv target/release/goose /usr/local/bin/goose
+    
+    - name: Run Goose Lint
+      id: goose-lint
+      env:
+        LINT_RULE: ${{ inputs.rule }}
+      run: |
+        tempfile=$(mktemp)
+        goose_log=$(mktemp)
+        git diff > $tempfile
+
+        promptfile=$(mktemp)
+        echo "Given the following diff:" > $promptfile
+        cat $tempfile >> $promptfile
+        echo "Lint the change, and possibly relevant context, using the following rule:">> $promptfile
+        echo $LINT_RULE >> $promptfile
+        echo "If changes should be made, write the suggestion to a file called '.goose-lint-suggestion.txt' in the root of the repository." >> $promptfile
+
+        goose run --instructions $promptfile > $goose_log
+
+        if [ -f .goose-lint-suggestion.txt ]; then
+            echo "Changes suggested. Please review and commit. (Goose logs are in $goose_log)"
+            echo
+            cat .goose-lint-suggestion.txt
+            exit 1
+        fi
