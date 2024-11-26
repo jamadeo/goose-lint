@@ -20,6 +20,7 @@ runs:
     - name: Build Goose
       working-directory: block/goose
       run: cargo build --release && mv target/release/goose /usr/local/bin/goose
+      shell: bash
     
     - name: Run Goose Lint
       id: goose-lint
@@ -45,3 +46,4 @@ runs:
             cat .goose-lint-suggestion.txt
             exit 1
         fi
+      shell: bash
