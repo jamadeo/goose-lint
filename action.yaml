@@ -50,6 +50,8 @@ runs:
         echo "Lint the change, and possibly relevant context, using the following rule:">> $promptfile
         echo $LINT_RULE >> $promptfile
         echo "If changes should be made, write the suggestion to a file called '.goose-lint-suggestion.txt' in the root of the repository." >> $promptfile
+        echo "When referencing line numbers, emit suggestions using the following format:" >> $promptfile
+        echo "  ::warning file=my_file.js,line=1::Missing semicolon" >> $promptfile
 
         goose run --instructions $promptfile > $goose_log
 

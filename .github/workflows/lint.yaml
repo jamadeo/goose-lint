@@ -1,7 +1,9 @@
 name: Lint
 
 on:
-  push
+  pull_request:
+    branches:
+      - main
 
 jobs:
   goose-lint:
@@ -13,6 +15,6 @@ jobs:
       - name: Run Lint
         uses: ./
         with:
-          rule: 'Check that all of my yaml files use single quotes'
+          rule: "Check that all of my yaml files use single quotes"
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
