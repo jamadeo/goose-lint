@@ -48,6 +48,10 @@ runs:
         goose_log=$(mktemp)
         git diff HEAD~ > $tempfile
 
+        echo "Diff:"
+        cat $tempfile
+        echo
+
         promptfile=$(mktemp)
         echo "Given the following diff:" > $promptfile
         cat $tempfile >> $promptfile
