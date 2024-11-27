@@ -53,16 +53,26 @@ runs:
         cat $tempfile >> $promptfile
         echo "Lint the change, and possibly relevant context, using the following rule:">> $promptfile
         echo $LINT_RULE >> $promptfile
-        echo "If changes should be made, write the suggestion to a file called '.goose-lint-suggestion.txt' in the root of the repository." >> $promptfile
+        echo "If changes should be made, write the suggestion to a file called '/tmp/goose-lint-suggestion.txt', and apply them to the code." >> $promptfile
         echo "When referencing line numbers, emit suggestions using the following format:" >> $promptfile
         echo "  ::warning file=my_file.js,line=1::Missing semicolon" >> $promptfile
 
         goose run --instructions $promptfile > $goose_log
 
-        if [ -f .goose-lint-suggestion.txt ]; then
+        if [ -f /tmp/goose-lint-suggestion.txt ]; then
             echo "Changes suggested. Please review and commit. (Goose logs are in $goose_log)"
             echo
-            cat .goose-lint-suggestion.txt
+            cat /tmp/goose-lint-suggestion.txt
+            echo "::set-output name=lint-result::$(cat $goose_log)"
+            echo "::set-output name=outcome::failure"
             exit 1
         fi
+
+        echo "::set-output name=outcome::success"
       shell: bash
+
+    - uses: parkerbxyz/suggest-changes@v1
+      if: steps.goose-lint.outcome == 'failure'
+      with:
+        comment: Goose has linted your code. Please review the suggestions.
+        event: REQUEST_CHANGES
