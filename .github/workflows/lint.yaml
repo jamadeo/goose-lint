@@ -15,6 +15,6 @@ jobs:
       - name: Run Lint
         uses: ./
         with:
-          rule: "Check that all of my yaml files use single quotes"
+          rule: "Check that all of my .js files have a semicolon at the end of each line."
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
