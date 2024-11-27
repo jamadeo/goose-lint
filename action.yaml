@@ -35,6 +35,10 @@ runs:
       run: cargo build --release && mv target/release/goose /usr/local/bin/goose
       shell: bash
 
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
     - name: Run Goose Lint
       id: goose-lint
       env:
@@ -42,7 +46,7 @@ runs:
       run: |
         tempfile=$(mktemp)
         goose_log=$(mktemp)
-        git diff > $tempfile
+        git diff HEAD~ > $tempfile
 
         promptfile=$(mktemp)
         echo "Given the following diff:" > $promptfile
