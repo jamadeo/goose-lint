@@ -67,7 +67,7 @@ runs:
             echo "Changes suggested. Please review and commit. (Goose logs are in $goose_log)"
             echo
             cat /tmp/goose-lint-suggestion.txt
-            echo "outcome=failure" >> $GITHUB_OUTPUT"
+            echo "outcome=failure" >> $GITHUB_OUTPUT
             exit 1
         fi
 
