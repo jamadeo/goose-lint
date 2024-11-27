@@ -68,10 +68,9 @@ runs:
             echo
             cat /tmp/goose-lint-suggestion.txt
             echo "outcome=failure" >> $GITHUB_OUTPUT
-            exit 1
+        else
+            echo "outcome=success" >> $GITHUB_ENV
         fi
-
-        echo "outcome=success" >> $GITHUB_ENV
       shell: bash
 
     - uses: parkerbxyz/suggest-changes@v1
@@ -79,3 +78,8 @@ runs:
       with:
         comment: Goose has linted your code. Please review the suggestions.
         event: REQUEST_CHANGES
+
+    - name: Fail if suggestions exist
+      if: steps.goose-lint.outcome == 'failure'
+      run: exit 1
+      shell: bash
