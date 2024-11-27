@@ -5,10 +5,6 @@ inputs:
     description: "Lint rule"
     required: true
     default: "Check that all comments (in-line, docstring, or other) are still relevant and accurate."
-outputs:
-  result:
-    description: "The lint result"
-    value: ${{ steps.goose-lint.outputs.lint-result }}
 runs:
   using: "composite"
   steps:
@@ -63,16 +59,19 @@ runs:
 
         goose run --instructions $promptfile > $goose_log
 
+        echo "Goose log:"
+        cat $goose_log
+        echo
+
         if [ -f /tmp/goose-lint-suggestion.txt ]; then
             echo "Changes suggested. Please review and commit. (Goose logs are in $goose_log)"
             echo
             cat /tmp/goose-lint-suggestion.txt
-            echo "::set-output name=lint-result::$(cat $goose_log)"
-            echo "::set-output name=outcome::failure"
+            echo "outcome=failure" >> $GITHUB_OUTPUT"
             exit 1
         fi
 
-        echo "::set-output name=outcome::success"
+        echo "outcome=success" >> $GITHUB_ENV
       shell: bash
 
     - uses: parkerbxyz/suggest-changes@v1
